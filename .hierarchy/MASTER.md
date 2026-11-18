@@ -1,6 +1,6 @@
 # MASTER — dunzo
 
-Updated: 2026-11-17 · This file is the master's memory. Keep it compact.
+Updated: 2026-11-18 · This file is the master's memory. Keep it compact.
 
 ## Summary
 dunzo (codename, to be replaced) is a local, single-user spaced-repetition flashcard web app. Content (decks, notes, executors, media) is separate from progress (scheduling state, review log, settings). Cards are rendered by sandboxed JavaScript "executors". Full design: `ARCHITECTURE.md` (rev 2, approved 2026-11-17).
@@ -19,7 +19,7 @@ Python 3.12, FastAPI sync routes, stdlib sqlite3, uv, ruff (100 cols), pytest te
 ## Node registry
 | id | name | parent | directory | mission (one line) | status | brief rev | contract |
 |----|------|--------|-----------|--------------------|--------|-----------|----------|
-| a | core | master | src/dunzo/core/ | shared errors, time, db, migrations, web helpers | briefed | 1 | v1 |
+| a | core | master | src/dunzo/core/ | shared errors, time, db, migrations, web helpers | done (a-001, 36 tests) | 1 | v1 |
 | b | scheduler | master | src/dunzo/scheduler/ | pure SM-2 + study-day arithmetic | briefed | 1 | v1 |
 | c | file_rules | master | src/dunzo/file_rules/ | pure upload rules, safe zip reading, media types | briefed | 1 | v1 |
 | d | schema_forms | master | src/dunzo/schema_forms/ | JSON Schema <-> form model | briefed | 1 | v1 |
@@ -66,11 +66,14 @@ Briefs embed the fragment texts in §4/§5; a contract change means updating the
 - Assumptions made on the user's behalf (approved 2026-11-17): study day uses the local zone (`TIMEZONE` override); extra study continues the same rotation; backups manual only in v1; Hard on a first review is a pass.
 - CSRF/Host protection enforced centrally in `app`; routers never enforce it.
 
+- 2026-11-18: Accepted REPORT-a (core complete, contract v1 unchanged). Accepted its assumptions: `migrate` validates all sets first and raises `ValueError` for a malformed set, `sqlite3.Error` for SQL failures; a DB newer than the code is a no-op for that owner; migration scripts must not contain BEGIN/COMMIT/SAVEPOINT or PRAGMA foreign_keys/journal_mode; a connection must be used by one request/thread at a time (use `get_conn`).
+- 2026-11-18: `httpx2` stays in the dev group: verified that `fastapi.testclient.TestClient` works with the pinned dependencies.
+
 ## Open requests
 - none
 
 ## Pending changes to propagate
-- none
+- CHG-e-001, CHG-f-001, CHG-h-001, CHG-l-001 (clarifications of how `core.migrate` behaves; no contract or brief rev change) — delivered in master-002.zip; mark done when the user confirms they reached those sessions.
 
 ## Build order / notes
 - Start in parallel: a, b, c, d, k, g (they need no other component; g only needs the schema contract).
