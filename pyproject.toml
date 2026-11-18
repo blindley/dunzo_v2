@@ -1,0 +1,42 @@
+[project]
+name = "dunzo"
+version = "0.1.0"
+description = "Spaced-repetition flashcards"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "jinja2>=3.1",
+    "jsonschema>=4.22",
+    "python-dotenv>=1.0",
+    "python-multipart>=0.0.9",
+    "tzdata>=2024.1",
+    "tzlocal>=5.2",
+    "uvicorn[standard]>=0.30",
+]
+
+[project.scripts]
+dunzo = "dunzo.main:main"
+
+[dependency-groups]
+dev = [
+    "httpx2>=2",
+    "playwright>=1.45",
+    "pytest>=8",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dunzo"]
+
+# Tests live inside each component's directory (src/dunzo/<dir>/tests/), not in a root tests/.
+[tool.pytest.ini_options]
+testpaths = ["src"]
+addopts = "--import-mode=importlib"
+
+[tool.ruff]
+line-length = 100
