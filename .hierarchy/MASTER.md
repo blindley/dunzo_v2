@@ -20,7 +20,7 @@ Python 3.12, FastAPI sync routes, stdlib sqlite3, uv, ruff (100 cols), pytest te
 | id | name | parent | directory | mission (one line) | status | brief rev | contract |
 |----|------|--------|-----------|--------------------|--------|-----------|----------|
 | a | core | master | src/dunzo/core/ | shared errors, time, db, migrations, web helpers | done (a-001, 36 tests) | 1 | v1 |
-| b | scheduler | master | src/dunzo/scheduler/ | pure SM-2 + study-day arithmetic | briefed | 1 | v1 |
+| b | scheduler | master | src/dunzo/scheduler/ | pure SM-2 + study-day arithmetic | done (b-001, 78 tests) | 1 | v1 |
 | c | file_rules | master | src/dunzo/file_rules/ | pure upload rules, safe zip reading, media types | briefed | 1 | v1 |
 | d | schema_forms | master | src/dunzo/schema_forms/ | JSON Schema <-> form model | briefed | 1 | v1 |
 | e | content | master | src/dunzo/content/ | content persistence, blobs, GC (expects to split) | briefed | 1 | v1 |
@@ -68,6 +68,8 @@ Briefs embed the fragment texts in §4/§5; a contract change means updating the
 
 - 2026-11-18: Accepted REPORT-a (core complete, contract v1 unchanged). Accepted its assumptions: `migrate` validates all sets first and raises `ValueError` for a malformed set, `sqlite3.Error` for SQL failures; a DB newer than the code is a no-op for that owner; migration scripts must not contain BEGIN/COMMIT/SAVEPOINT or PRAGMA foreign_keys/journal_mode; a connection must be used by one request/thread at a time (use `get_conn`).
 - 2026-11-18: `httpx2` stays in the dev group: verified that `fastapi.testclient.TestClient` works with the pinned dependencies.
+
+- 2026-11-18: Accepted REPORT-b (scheduler complete, contract v1 unchanged; rules in `.hierarchy/b/sm2.md`). Accepted its assumptions: the ease formula applies to every non-lapse review (Hard -0.14, Good 0, Easy +0.10); graduating from relearning keeps the reduced interval with no Easy bonus; Again inside learning/relearning leaves the state unchanged; rounding is half-up; the 36500-day cap wins; study days are 23 or 25 hours across DST. State shape: `{phase, ease, interval_days, reps, lapses}`, opaque to consumers.
 
 ## Open requests
 - none
