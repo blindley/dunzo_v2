@@ -21,7 +21,7 @@ Python 3.12, FastAPI sync routes, stdlib sqlite3, uv, ruff (100 cols), pytest te
 |----|------|--------|-----------|--------------------|--------|-----------|----------|
 | a | core | master | src/dunzo/core/ | shared errors, time, db, migrations, web helpers | done (a-001, 36 tests) | 1 | v1 |
 | b | scheduler | master | src/dunzo/scheduler/ | pure SM-2 + study-day arithmetic | done (b-001, 78 tests) | 1 | v1 |
-| c | file_rules | master | src/dunzo/file_rules/ | pure upload rules, safe zip reading, media types | briefed | 1 | v1 |
+| c | file_rules | master | src/dunzo/file_rules/ | pure upload rules, safe zip reading, media types | done (c-001, 158 tests); CHG-c-001 pending | 2 | v1 |
 | d | schema_forms | master | src/dunzo/schema_forms/ | JSON Schema <-> form model | briefed | 1 | v1 |
 | e | content | master | src/dunzo/content/ | content persistence, blobs, GC (expects to split) | briefed | 1 | v1 |
 | f | progress | master | src/dunzo/progress/ | progress persistence, settings, backup/restore | briefed | 1 | v1 |
@@ -71,10 +71,14 @@ Briefs embed the fragment texts in §4/§5; a contract change means updating the
 
 - 2026-11-18: Accepted REPORT-b (scheduler complete, contract v1 unchanged; rules in `.hierarchy/b/sm2.md`). Accepted its assumptions: the ease formula applies to every non-lapse review (Hard -0.14, Good 0, Easy +0.10); graduating from relearning keeps the reduced interval with no Easy bonus; Again inside learning/relearning leaves the state unchanged; rounding is half-up; the 36500-day cap wins; study days are 23 or 25 hours across DST. State shape: `{phase, ease, interval_days, reps, lapses}`, opaque to consumers.
 
+- 2026-11-18: Accepted REPORT-c (file_rules complete, 158 tests). Accepted: `read_zip` returns archive order; two-stage entry-count defence (2000 declared entries incl. folders, 500 file entries); reserved `dunzo/` match is case-insensitive; duplicate paths and file-vs-folder clashes are reported by `validate_files`; problems capped at 100. Case-only duplicate paths stay distinct (paths are only database keys).
+- 2026-11-18: Contract change (additive, v1 text amended): `read_zip` ignores `__MACOSX/` entries and `.DS_Store` files, because a Finder-made zip otherwise fails with "missing index.html". Brief c is rev 2 (CHG-c-001). Briefs e, h, i embed the pre-amendment text of `file_rules.md`; the change is compatible for them, refresh the text on their next revision.
+
 ## Open requests
 - none
 
 ## Pending changes to propagate
+- CHG-c-001 (read_zip junk ignoring) — delivered in master-004.zip.
 - CHG-e-001, CHG-f-001, CHG-h-001, CHG-l-001 (clarifications of how `core.migrate` behaves; no contract or brief rev change) — delivered in master-002.zip; mark done when the user confirms they reached those sessions.
 
 ## Build order / notes

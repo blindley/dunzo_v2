@@ -11,7 +11,9 @@ def normalize_path(path: str) -> str      # segments of [A-Za-z0-9._\-@+=~], "/"
 def guess_mime(path: str) -> str          # by extension from a fixed table; unknown -> "application/octet-stream"
 def detect_media_mime(filename: str, head: bytes) -> str   # extension table first, then magic bytes of `head` (png jpeg gif webp mp3 ogg wav mp4 webm pdf); else "application/octet-stream"; never raises
 def read_zip(data: bytes) -> list[FileEntry]
-    # strips one common top-level folder if every entry is under it; skips directory entries.
+    # first ignores OS junk (entries under a top-level `__MACOSX/` folder and files named `.DS_Store` at any depth; ignored
+    # entries do not count toward any limit and do not affect folder stripping), then strips one common top-level folder
+    # if every remaining entry is under it; skips directory entries.
     # Raises FileRuleError for: unsafe paths (absolute, "..", backslash), symlinks, encrypted entries, duplicate paths,
     # more than MAX_FILES entries, any file or the total over the limits (checked from headers AND while inflating), corrupt zip
 def validate_files(files: Sequence[FileEntry]) -> list[FileMeta]

@@ -1,7 +1,7 @@
 PROJECT-HIERARCHY BRIEF
 # BRIEF — c: file_rules
 
-Brief rev: 1 · Parent: master · Children: none yet
+Brief rev: 2 · Parent: master · Children: none yet
 Project: dunzo (codename) — a local single-user spaced-repetition flashcard web app: Python 3.12, FastAPI, SQLite, sandboxed JavaScript "executors" render cards.
 
 > This file is your entire world. Read all of it. Do not ask for other files; if something you need is missing, file a REQ (see §9).
@@ -12,6 +12,7 @@ Provide the pure rules for uploaded files: path and type rules, limits, hostile-
 ## 2. Responsibilities (you own these)
 - Implement §4. `guess_mime` uses a fixed table covering at least html, css, js, mjs, json, svg, png, jpg, jpeg, gif, webp, avif, ico, woff, woff2, ttf, otf, mp3, ogg, wav, m4a, mp4, webm, txt, md, xml, csv, wasm, pdf.
 - `read_zip` must be safe against hostile archives: path traversal, absolute paths, symlinks (check the unix mode in `external_attr`), encrypted entries, duplicate names, zip bombs (enforce the limits from declared sizes and again while inflating in bounded chunks), entry-count bombs.
+- Ignore OS junk in `read_zip` (rev 2): entries under a top-level `__MACOSX/` folder and files named `.DS_Store` at any depth are dropped before anything else (before limit counting and wrapper stripping); add tests with a zip made the macOS Finder way (wrapper folder + `__MACOSX/` + `.DS_Store`).
 - Collect all problems in one `FileRuleError.problems` list where practical.
 - Tests with crafted archives for every rejection above, plus a valid folder-wrapped zip and a flat zip, and `files_hash` stability (order-independent).
 
@@ -35,7 +36,9 @@ def normalize_path(path: str) -> str      # segments of [A-Za-z0-9._\-@+=~], "/"
 def guess_mime(path: str) -> str          # by extension from a fixed table; unknown -> "application/octet-stream"
 def detect_media_mime(filename: str, head: bytes) -> str   # extension table first, then magic bytes of `head` (png jpeg gif webp mp3 ogg wav mp4 webm pdf); else "application/octet-stream"; never raises
 def read_zip(data: bytes) -> list[FileEntry]
-    # strips one common top-level folder if every entry is under it; skips directory entries.
+    # first ignores OS junk (entries under a top-level `__MACOSX/` folder and files named `.DS_Store` at any depth; ignored
+    # entries do not count toward any limit and do not affect folder stripping), then strips one common top-level folder
+    # if every remaining entry is under it; skips directory entries.
     # Raises FileRuleError for: unsafe paths (absolute, "..", backslash), symlinks, encrypted entries, duplicate paths,
     # more than MAX_FILES entries, any file or the total over the limits (checked from headers AND while inflating), corrupt zip
 def validate_files(files: Sequence[FileEntry]) -> list[FileMeta]
